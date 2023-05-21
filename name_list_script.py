@@ -22,7 +22,7 @@ def extract_names(content, start_marker, end_marker, is_list_format):
 # File path goes here, make sure to replace \ with \\. Double it up essentially.
 file_path = "D:\\L\\Projects and adventures\\CK3\\Workshop\\00_mayan.txt"
 
-# Output file is txt paste the contents yourself to the appropriate file.
+# Output file is txt paste the contents to the appropriate file yourself.
 new_file = "D:\\L\\Projects and adventures\\CK3\\Workshop\\name_listed_mayan.txt"
 
 # Extracting specific parts from the file
