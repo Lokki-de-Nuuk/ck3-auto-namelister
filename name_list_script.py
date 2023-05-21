@@ -1,3 +1,24 @@
+# Function for extracting names
+def extract_names(content, start_marker, end_marker, is_list_format):
+    extracted_names = []
+    start_index = content.find(start_marker) + len(start_marker)
+    end_index = content.find(end_marker, start_index)
+    extracted_parts = content[start_index:end_index].strip()
+
+    for line in extracted_parts.split('\n'):
+        line = line.strip()
+        # Ignore comment lines
+        if line and not line.startswith('#'):
+            if is_list_format:
+                # If a line is in brackets then remove them
+                if line.startswith('{') and line.endswith('}'):
+                    extracted_names.extend(line[1:-1].strip().split())
+            else:
+                extracted_names.append(line)
+
+    return extracted_names
+
+
 # File path goes here, make sure to replace \ with \\. Double it up essentially.
 file_path = "D:\\L\\Projects and adventures\\CK3\\Workshop\\00_mayan.txt"
 
@@ -9,63 +30,19 @@ with open(file_path, "r") as file:
     content = file.read()
 
     # Cadet dynasty names
-    start_marker = "cadet_dynasty_names = {"
-    end_marker = "}"
-    start_index = content.index(start_marker) + len(start_marker)
-    end_index = content.index(end_marker, start_index)
-    extracted_parts = content[start_index:end_index].strip()
-
-    # Creates empty thing, which gets filled with stuff later on
-    extracted_names = []
-
-    # Write down the names and remove comment lines
-    for line in extracted_parts.split('\n'):
-        line = line.strip()
-        if line.startswith('{') and line.endswith('}'):
-            extracted_names.append(line[1:-1].strip())
+    cadet_dynasty_names = extract_names(content, "cadet_dynasty_names =", "}", True)
 
     # Dynasty names
-    start_marker = "dynasty_names = {"
-    end_marker = "}"
-    start_index = content.index(start_marker) + len(start_marker)
-    end_index = content.index(end_marker, start_index)
-    extracted_parts = content[start_index:end_index].strip()
+    dynasty_names = extract_names(content, "dynasty_names =", "}", True)
 
-    # Processing
-    for line in extracted_parts.split('\n'):
-        line = line.strip()
-        if line.startswith('{') and line.endswith('}'):
-            extracted_names.append(line[1:-1].strip())
-    
-    
     # Male names
-    start_marker = "male_names = {"
-    end_marker = "}"
-    start_index = content.index(start_marker) + len(start_marker)
-    end_index = content.index(end_marker, start_index)
-    extracted_parts = content[start_index:end_index].strip()
-
-    # Processing
-    for line in extracted_parts.split('\n'):
-        line = line.strip()
-        if line and not line.startswith('#'):
-            extracted_names.extend(line.split())
+    male_names = extract_names(content, "male_names =", "}", False)
 
     # Female names
-    start_marker = "female_names = {"
-    end_marker = "}"
-    start_index = content.index(start_marker) + len(start_marker)
-    end_index = content.index(end_marker, start_index)
-    extracted_parts = content[start_index:end_index].strip()
+    female_names = extract_names(content, "female_names =", "}", False)
 
-    # Processing
-    for line in extracted_parts.split('\n'):
-        line = line.strip()
-        if line and not line.startswith('#'):
-            extracted_names.extend(line.split())
-
-    # Remove duplicates and alphabetise the names
-    extracted_names = sorted(set(extracted_names))
+    # Combine all extracted names
+    extracted_names = sorted(set(cadet_dynasty_names + dynasty_names + male_names + female_names))
 
 # Writing the extracted names to the new file
 with open(new_file, "w") as file:
